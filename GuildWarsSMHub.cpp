@@ -3,7 +3,7 @@
 //
 
 #include "pch.h"
-#include "Game.h"
+#include "GuildWarsSMHub.h"
 
 extern void ExitGame() noexcept;
 
@@ -11,7 +11,7 @@ using namespace DirectX;
 
 using Microsoft::WRL::ComPtr;
 
-Game::Game() noexcept(false)
+GuildWarsSMHub::GuildWarsSMHub() noexcept(false)
 {
     m_deviceResources = std::make_unique<DX::DeviceResources>();
     // TODO: Provide parameters for swapchain format, depth/stencil format, and backbuffer count.
@@ -21,7 +21,7 @@ Game::Game() noexcept(false)
 }
 
 // Initialize the Direct3D resources required to run.
-void Game::Initialize(HWND window, int width, int height)
+void GuildWarsSMHub::Initialize(HWND window, int width, int height)
 {
     m_deviceResources->SetWindow(window, width, height);
 
@@ -41,18 +41,15 @@ void Game::Initialize(HWND window, int width, int height)
 
 #pragma region Frame Update
 // Executes the basic game loop.
-void Game::Tick()
+void GuildWarsSMHub::Tick()
 {
-    m_timer.Tick([&]()
-    {
-        Update(m_timer);
-    });
+    m_timer.Tick([&]() { Update(m_timer); });
 
     Render();
 }
 
 // Updates the world.
-void Game::Update(DX::StepTimer const& timer)
+void GuildWarsSMHub::Update(DX::StepTimer const& timer)
 {
     float elapsedTime = float(timer.GetElapsedSeconds());
 
@@ -63,7 +60,7 @@ void Game::Update(DX::StepTimer const& timer)
 
 #pragma region Frame Render
 // Draws the scene.
-void Game::Render()
+void GuildWarsSMHub::Render()
 {
     // Don't try to render anything before the first Update.
     if (m_timer.GetFrameCount() == 0)
@@ -86,7 +83,7 @@ void Game::Render()
 }
 
 // Helper method to clear the back buffers.
-void Game::Clear()
+void GuildWarsSMHub::Clear()
 {
     m_deviceResources->PIXBeginEvent(L"Clear");
 
@@ -109,42 +106,39 @@ void Game::Clear()
 
 #pragma region Message Handlers
 // Message handlers
-void Game::OnActivated()
+void GuildWarsSMHub::OnActivated()
 {
     // TODO: Game is becoming active window.
 }
 
-void Game::OnDeactivated()
+void GuildWarsSMHub::OnDeactivated()
 {
     // TODO: Game is becoming background window.
 }
 
-void Game::OnSuspending()
+void GuildWarsSMHub::OnSuspending()
 {
     // TODO: Game is being power-suspended (or minimized).
 }
 
-void Game::OnResuming()
+void GuildWarsSMHub::OnResuming()
 {
     m_timer.ResetElapsedTime();
 
     // TODO: Game is being power-resumed (or returning from minimize).
 }
 
-void Game::OnWindowMoved()
+void GuildWarsSMHub::OnWindowMoved()
 {
     auto const r = m_deviceResources->GetOutputSize();
     m_deviceResources->WindowSizeChanged(r.right, r.bottom);
 }
 
-void Game::OnDisplayChange()
-{
-    m_deviceResources->UpdateColorSpace();
-}
+void GuildWarsSMHub::OnDisplayChange() { m_deviceResources->UpdateColorSpace(); }
 
-void Game::OnWindowSizeChanged(int width, int height)
+void GuildWarsSMHub::OnWindowSizeChanged(int width, int height)
 {
-    if (!m_deviceResources->WindowSizeChanged(width, height))
+    if (! m_deviceResources->WindowSizeChanged(width, height))
         return;
 
     CreateWindowSizeDependentResources();
@@ -153,7 +147,7 @@ void Game::OnWindowSizeChanged(int width, int height)
 }
 
 // Properties
-void Game::GetDefaultSize(int& width, int& height) const noexcept
+void GuildWarsSMHub::GetDefaultSize(int& width, int& height) const noexcept
 {
     // TODO: Change to desired default window size (note minimum size is 320x200).
     width = 800;
@@ -163,7 +157,7 @@ void Game::GetDefaultSize(int& width, int& height) const noexcept
 
 #pragma region Direct3D Resources
 // These are the resources that depend on the device.
-void Game::CreateDeviceDependentResources()
+void GuildWarsSMHub::CreateDeviceDependentResources()
 {
     auto device = m_deviceResources->GetD3DDevice();
 
@@ -172,17 +166,17 @@ void Game::CreateDeviceDependentResources()
 }
 
 // Allocate all memory resources that change on a window SizeChanged event.
-void Game::CreateWindowSizeDependentResources()
+void GuildWarsSMHub::CreateWindowSizeDependentResources()
 {
     // TODO: Initialize windows-size dependent objects here.
 }
 
-void Game::OnDeviceLost()
+void GuildWarsSMHub::OnDeviceLost()
 {
     // TODO: Add Direct3D resource cleanup here.
 }
 
-void Game::OnDeviceRestored()
+void GuildWarsSMHub::OnDeviceRestored()
 {
     CreateDeviceDependentResources();
 

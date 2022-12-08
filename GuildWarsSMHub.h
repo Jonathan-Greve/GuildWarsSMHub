@@ -7,21 +7,19 @@
 #include "DeviceResources.h"
 #include "StepTimer.h"
 
-
 // A basic game implementation that creates a D3D11 device and
 // provides a game loop.
-class Game final : public DX::IDeviceNotify
+class GuildWarsSMHub final : public DX::IDeviceNotify
 {
 public:
+    GuildWarsSMHub() noexcept(false);
+    ~GuildWarsSMHub() = default;
 
-    Game() noexcept(false);
-    ~Game() = default;
+    GuildWarsSMHub(GuildWarsSMHub&&) = default;
+    GuildWarsSMHub& operator=(GuildWarsSMHub&&) = default;
 
-    Game(Game&&) = default;
-    Game& operator= (Game&&) = default;
-
-    Game(Game const&) = delete;
-    Game& operator= (Game const&) = delete;
+    GuildWarsSMHub(GuildWarsSMHub const&) = delete;
+    GuildWarsSMHub& operator=(GuildWarsSMHub const&) = delete;
 
     // Initialization and management
     void Initialize(HWND window, int width, int height);
@@ -43,10 +41,9 @@ public:
     void OnWindowSizeChanged(int width, int height);
 
     // Properties
-    void GetDefaultSize( int& width, int& height ) const noexcept;
+    void GetDefaultSize(int& width, int& height) const noexcept;
 
 private:
-
     void Update(DX::StepTimer const& timer);
     void Render();
 
@@ -56,8 +53,8 @@ private:
     void CreateWindowSizeDependentResources();
 
     // Device resources.
-    std::unique_ptr<DX::DeviceResources>    m_deviceResources;
+    std::unique_ptr<DX::DeviceResources> m_deviceResources;
 
     // Rendering loop timer.
-    DX::StepTimer                           m_timer;
+    DX::StepTimer m_timer;
 };
