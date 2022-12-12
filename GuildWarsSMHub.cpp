@@ -4,6 +4,7 @@
 
 #include "pch.h"
 #include "GuildWarsSMHub.h"
+#include "ShowClientsConnected.h"
 
 extern void ExitGame() noexcept;
 
@@ -35,6 +36,13 @@ void GuildWarsSMHub::Initialize(HWND window, int width, int height)
     // e.g. for 144 FPS fixed timestep update logic, call:
     m_timer.SetFixedTimeStep(true);
     m_timer.SetTargetElapsedSeconds(1.0 / 144);
+
+    // Imgui init
+    IMGUI_CHECKVERSION();
+    ImGui::CreateContext();
+    ImGui::StyleColorsDark();
+    ImGui_ImplWin32_Init(window);
+    ImGui_ImplDX11_Init(m_deviceResources->GetD3DDevice(), m_deviceResources->GetD3DDeviceContext());
 }
 
 #pragma region Frame Update
@@ -73,6 +81,23 @@ void GuildWarsSMHub::Render()
 
     // TODO: Add your rendering code here.
     context;
+
+    // Our state
+    bool show_demo_window = true;
+    // Start the Dear ImGui frame
+    ImGui_ImplDX11_NewFrame();
+    ImGui_ImplWin32_NewFrame();
+    ImGui::NewFrame();
+
+    // 1. Show the big demo window (Most of the sample code is in ImGui::ShowDemoWindow()! You can browse its code to learn more about Dear ImGui!).
+    if (show_demo_window)
+        ImGui::ShowDemoWindow(&show_demo_window);
+
+    ShowClientsConnected()({});
+
+    // Rendering
+    ImGui::Render();
+    ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
 
     m_deviceResources->PIXEndEvent();
 
@@ -148,8 +173,8 @@ void GuildWarsSMHub::OnWindowSizeChanged(int width, int height)
 void GuildWarsSMHub::GetDefaultSize(int& width, int& height) const noexcept
 {
     // TODO: Change to desired default window size (note minimum size is 320x200).
-    width = 800;
-    height = 600;
+    width = 1400;
+    height = 900;
 }
 #pragma endregion
 
