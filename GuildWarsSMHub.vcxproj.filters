@@ -14,6 +14,9 @@
     <Filter Include="My ImGui Components">
       <UniqueIdentifier>{77203522-fd80-41eb-9710-6416745730af}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Party Manager thread">
+      <UniqueIdentifier>{dd538b16-075b-400a-b419-6f8c5433bc2c}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
@@ -51,6 +54,7 @@
     <ClInclude Include="ShowClientsConnected.h">
       <Filter>My ImGui Components</Filter>
     </ClInclude>
+    <ClInclude Include="PartyManager.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp" />
@@ -83,6 +87,7 @@
     <ClCompile Include="ShowClientsConnected.cpp">
       <Filter>My ImGui Components</Filter>
     </ClCompile>
+    <ClCompile Include="PartyManager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="resource.rc" />
