@@ -51,6 +51,11 @@
 #include <system_error>
 #include <tuple>
 #include <string>
+#include <thread>
+#include <mutex>
+#include <chrono>
+#include <future>
+#include <functional>
 
 #ifdef _DEBUG
 #include <dxgidebug.h>
@@ -64,7 +69,7 @@
 #include <tchar.h>
 
 // Shared memory
-#include "GWSharedMemory.h";
+#include "GWSharedMemory.h"
 
 namespace DX
 {
