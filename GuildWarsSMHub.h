@@ -6,6 +6,7 @@
 
 #include "DeviceResources.h"
 #include "StepTimer.h"
+#include "PartyManager.h"
 
 // A basic game implementation that creates a D3D11 device and
 // provides a game loop.
@@ -57,4 +58,6 @@ private:
 
     // Rendering loop timer.
     DX::StepTimer m_timer;
+
+    PartyManager m_party_manager;
 };

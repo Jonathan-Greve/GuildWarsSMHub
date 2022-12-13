@@ -5,6 +5,7 @@
 #include "pch.h"
 #include "GuildWarsSMHub.h"
 #include "ShowClientsConnected.h"
+#include "PartyManager.h"
 
 extern void ExitGame() noexcept;
 
@@ -24,6 +25,10 @@ GuildWarsSMHub::GuildWarsSMHub() noexcept(false)
 // Initialize the Direct3D resources required to run.
 void GuildWarsSMHub::Initialize(HWND window, int width, int height)
 {
+    // Init Party Manager
+    std::thread party_manager_thread(&PartyManager::run, &m_party_manager);
+    party_manager_thread.detach();
+
     m_deviceResources->SetWindow(window, width, height);
 
     m_deviceResources->CreateDeviceResources();
@@ -93,7 +98,7 @@ void GuildWarsSMHub::Render()
     if (show_demo_window)
         ImGui::ShowDemoWindow(&show_demo_window);
 
-    ShowClientsConnected()({});
+    ShowClientsConnected()(m_party_manager.connection_data);
 
     // Rendering
     ImGui::Render();
