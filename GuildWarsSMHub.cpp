@@ -26,8 +26,7 @@ GuildWarsSMHub::GuildWarsSMHub() noexcept(false)
 void GuildWarsSMHub::Initialize(HWND window, int width, int height)
 {
     // Init Party Manager
-    std::thread party_manager_thread(&PartyManager::run, &m_party_manager);
-    party_manager_thread.detach();
+    m_party_manager_thread = std::thread(&PartyManager::run, &m_party_manager);
 
     m_deviceResources->SetWindow(window, width, height);
 
@@ -180,6 +179,13 @@ void GuildWarsSMHub::GetDefaultSize(int& width, int& height) const noexcept
     // TODO: Change to desired default window size (note minimum size is 320x200).
     width = 1400;
     height = 900;
+}
+void GuildWarsSMHub::Terminate()
+{
+    m_party_manager.connection_data.terminate();
+
+    // Join all threads before closing
+    m_party_manager_thread.join();
 }
 #pragma endregion
 

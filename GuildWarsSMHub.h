@@ -44,6 +44,8 @@ public:
     // Properties
     void GetDefaultSize(int& width, int& height) const noexcept;
 
+    void Terminate();
+
 private:
     void Update(DX::StepTimer const& timer);
     void Render();
@@ -60,4 +62,5 @@ private:
     DX::StepTimer m_timer;
 
     PartyManager m_party_manager;
+    std::thread m_party_manager_thread;
 };

@@ -1,24 +1,42 @@
 #pragma once
+extern bool is_shutting_down;
+
 class ConnectionData
 {
 public:
     ConnectionData()
     {
+        //shared_memory_object::remove("connections");
         m_connections_managed_shared_memory = managed_shared_memory(open_or_create, "connections", 65536);
-        void_allocator void_alloc(m_connections_managed_shared_memory.get_segment_manager());
-        m_connected_clients = std::unique_ptr<ConnectedClients>(
-          m_connections_managed_shared_memory.find_or_construct<ConnectedClients>(unique_instance)(
-            void_alloc));
 
-        update();
+        m_connected_clients =
+          m_connections_managed_shared_memory.find<ConnectedClients>(unique_instance).first;
+        if (! m_connected_clients)
+        {
+            void_allocator void_alloc(m_connections_managed_shared_memory.get_segment_manager());
+            m_connected_clients =
+              m_connections_managed_shared_memory.construct<ConnectedClients>(unique_instance)(void_alloc);
+        }
     }
 
-    // Update data
+    void terminate() { m_connected_clients->cond_connection_changed.notify_all(); }
+
+    // Update data. Blocking until connection data changes.
     void update()
     {
-        std::unique_lock lock(m_shared_mutex);
+        //m_connections_managed_shared_memory.destroy_ptr(m_connected_clients);
+        //shared_memory_object::remove("connections");
         if (m_connected_clients)
         {
+            scoped_lock<interprocess_mutex> lock(m_connected_clients->m_mutex);
+            if (m_connected_shared_memory_names.size() ==
+                m_connected_clients->get_connected_shared_memory_names().size())
+            {
+                m_connected_clients->cond_connection_changed.wait(lock);
+            }
+            if (is_shutting_down)
+                return;
+
             auto new_data = m_connected_clients->get_connected_shared_memory_names();
             std::set<std::string> new_connected_shared_memory_names;
             for (const auto& char_string_name : new_data)
@@ -51,7 +69,6 @@ public:
                       name, std::make_unique<managed_shared_memory>(open_or_create, name.c_str(), 65536));
                 }
             }
-
             // Assert that our locally cached set of connection match the one in shared memory
             assert(m_connected_shared_memory_names == new_connected_shared_memory_names);
         }
@@ -59,18 +76,13 @@ public:
 
     // Get the connected clients emails. This is not neccesarily up to date.
     // Call update first to update.
-    const std::set<std::string>& get_connected_client_emails()
-    {
-        std::shared_lock shared_lock(m_shared_mutex);
-        return m_connected_shared_memory_names;
-    };
+    const std::set<std::string>& get_connected_client_emails() { return m_connected_shared_memory_names; };
 
 private:
     std::set<std::string> m_connected_shared_memory_names;
-    std::shared_mutex m_shared_mutex;
 
     managed_shared_memory m_connections_managed_shared_memory;
-    std::unique_ptr<ConnectedClients> m_connected_clients;
+    ConnectedClients* m_connected_clients;
 
     std::map<std::string, std::unique_ptr<managed_shared_memory>> m_client_shared_memories;
 };
@@ -82,22 +94,15 @@ public:
     // Exists when the program terminates.
     void run()
     {
-        while (! m_is_shutting_down)
+        while (! is_shutting_down)
         {
+            // Blocking until connection_data is changed.
             connection_data.update();
-
-            // Don't waste resources reading the SM data too often. Since it doesn't change that often.
-            // TODO: Implement a shared memory condition variable that is notified when a connection is
-            // added or dropped.
-            std::this_thread::sleep_until(std::chrono::steady_clock::now() +
-                                          std::chrono::milliseconds(m_sleep_ms));
         }
     }
 
     ConnectionData connection_data;
 
 private:
-    bool m_is_shutting_down = false;
-
     uint32_t m_sleep_ms = 100;
 };
