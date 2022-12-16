@@ -183,7 +183,6 @@ void GuildWarsSMHub::GetDefaultSize(int& width, int& height) const noexcept
 void GuildWarsSMHub::Terminate()
 {
     m_party_manager.connection_data.terminate();
-
     // Join all threads before closing
     m_party_manager_thread.join();
 }
