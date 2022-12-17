@@ -96,7 +96,7 @@ public:
     {
         while (! is_shutting_down)
         {
-            // Blocking until connection_data is changed.
+            // Blocking until connection_data is changed or timeout is reached.
             connection_data.update();
         }
     }
