@@ -75,7 +75,7 @@
     <ClInclude Include="PartyManager.h">
       <Filter>Party Manager thread</Filter>
     </ClInclude>
-    <ClInclude Include="PartyThread.h">
+    <ClInclude Include="InstanceParty.h">
       <Filter>My ImGui Components\Party thread</Filter>
     </ClInclude>
   </ItemGroup>
@@ -113,7 +113,7 @@
     <ClCompile Include="PartyManager.cpp">
       <Filter>Party Manager thread</Filter>
     </ClCompile>
-    <ClCompile Include="PartyThread.cpp">
+    <ClCompile Include="InstanceParty.cpp">
       <Filter>My ImGui Components\Party thread</Filter>
     </ClCompile>
   </ItemGroup>

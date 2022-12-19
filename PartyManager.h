@@ -1,9 +1,9 @@
 #pragma once
-#include "PartyThread.h"
+#include "InstanceParty.h"
 extern bool is_shutting_down;
 
 // <instance_id, party_id>
-using PartyId = std::pair<uint32_t, uint32_t>;
+using InstancePartyId = std::pair<uint32_t, uint32_t>;
 
 class ConnectionData
 {
@@ -57,7 +57,7 @@ public:
 
         std::vector<std::string> connected_client_names;
         std::vector<std::string> disconnected_client_names;
-        for (auto& name : diff)
+        for (const auto& name : diff)
         {
             // Remove dropped connections and remove shared memory
             if (! new_connected_shared_memory_names.contains(name))
@@ -146,7 +146,8 @@ public:
             // the login screen, loading screen, character select menu etc.
             for (const auto& [name, client_data] : client_datas)
             {
-                PartyId party_id = {client_data->instance_info.instance_id, client_data->party.party_id};
+                InstancePartyId party_id = {client_data->instance_info.instance_id,
+                                            client_data->party.party_id};
                 if (! is_party_id_valid(party_id))
                     continue;
 
@@ -185,9 +186,9 @@ public:
                 {
                     auto it3 =
                       party_id_to_party_thread_objects
-                        .insert({party_id, PartyThread(client_datas, party_id_to_client_names[party_id])})
+                        .insert({party_id, InstanceParty(client_datas, party_id_to_client_names[party_id])})
                         .first;
-                    auto new_party_thread = std::thread(&PartyThread::run, &it3->second);
+                    auto new_party_thread = std::thread(&InstanceParty::run, &it3->second);
                     party_id_to_party_thread.insert({party_id, std::move(new_party_thread)});
                 }
             }
@@ -201,11 +202,11 @@ private:
 
     std::unordered_map<std::string, ClientData*> client_datas;
 
-    std::map<PartyId, PartyThread> party_id_to_party_thread_objects;
-    std::map<PartyId, std::thread> party_id_to_party_thread;
+    std::map<InstancePartyId, InstanceParty> party_id_to_party_thread_objects;
+    std::map<InstancePartyId, std::thread> party_id_to_party_thread;
 
-    std::map<PartyId, std::unordered_set<std::string>> party_id_to_client_names;
-    std::unordered_map<std::string, PartyId> client_name_to_party_id;
+    std::map<InstancePartyId, std::unordered_set<std::string>> party_id_to_client_names;
+    std::unordered_map<std::string, InstancePartyId> client_name_to_party_id;
 
     // Each client has a <InstanceId, PartyId> pair which uniquely identifies a party.
     // This data structure keeps track of which players are in each party and their
@@ -213,7 +214,7 @@ private:
     std::unordered_map<int, std::unordered_map<int, std::pair<std::vector<string>, std::thread>>>
       existing_parties;
 
-    bool is_party_id_valid(PartyId party_id) { return party_id.first > 0 && party_id.second > 0; }
+    bool is_party_id_valid(InstancePartyId party_id) { return party_id.first > 0 && party_id.second > 0; }
 
     void remove_client_data(const std::string& name) { client_datas.erase(name); }
 

@@ -1,11 +1,11 @@
 #pragma once
 extern bool is_shutting_down;
 
-class PartyThread
+class InstanceParty
 {
 public:
-    PartyThread(const std::unordered_map<std::string, ClientData*>& client_datas,
-                const std::unordered_set<std::string>& client_names_in_party)
+    InstanceParty(const std::unordered_map<std::string, ClientData*>& client_datas,
+                  const std::unordered_set<std::string>& client_names_in_party)
         : m_client_datas(client_datas)
         , m_client_names_in_party(client_names_in_party)
     {

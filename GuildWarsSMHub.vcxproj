@@ -195,7 +195,7 @@
     <ClInclude Include="imstb_truetype.h" />
     <ClInclude Include="LoadTextureFromFile.h" />
     <ClInclude Include="PartyManager.h" />
-    <ClInclude Include="PartyThread.h" />
+    <ClInclude Include="InstanceParty.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="ShowClientsConnected.h" />
     <ClInclude Include="stb_image.h" />
@@ -234,7 +234,7 @@
     </ClCompile>
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="PartyManager.cpp" />
-    <ClCompile Include="PartyThread.cpp" />
+    <ClCompile Include="InstanceParty.cpp" />
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
