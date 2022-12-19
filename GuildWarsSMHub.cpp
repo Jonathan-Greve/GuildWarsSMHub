@@ -6,6 +6,9 @@
 #include "GuildWarsSMHub.h"
 #include "ShowClientsConnected.h"
 #include "PartyManager.h"
+#include "get_filenames.h"
+#include "LoadTextureFromFile.h"
+#include "get_first_integer_in_string.h"
 
 extern void ExitGame() noexcept;
 
@@ -47,6 +50,26 @@ void GuildWarsSMHub::Initialize(HWND window, int width, int height)
     ImGui::StyleColorsDark();
     ImGui_ImplWin32_Init(window);
     ImGui_ImplDX11_Init(m_deviceResources->GetD3DDevice(), m_deviceResources->GetD3DDeviceContext());
+
+    // Load GW skill images to textures for rendering
+    std::string path = "..\\cropped_skills";
+    std::vector<std::string> filenames;
+
+    get_filenames(path, filenames);
+
+    for (const auto& file_name : filenames)
+    {
+        // Get the integer at the end of the file_name string
+        auto skill_id = get_first_integer_in_string(file_name);
+
+        std::string file_path = std::format("{}/{}", path, file_name);
+        m_skills.insert({skill_id, GW_skill()});
+        auto it = m_skills.find(skill_id);
+
+        bool ret = LoadTextureFromFile(file_path.c_str(), &it->second.skill_icon_texture, &it->second.width,
+                                       &it->second.height, m_deviceResources->GetD3DDevice());
+        IM_ASSERT(ret);
+    }
 }
 
 #pragma region Frame Update
@@ -97,7 +120,7 @@ void GuildWarsSMHub::Render()
     if (show_demo_window)
         ImGui::ShowDemoWindow(&show_demo_window);
 
-    ShowClientsConnected()(m_party_manager.connection_data);
+    ShowClientsConnected()(m_party_manager.connection_data, m_skills);
 
     // Rendering
     ImGui::Render();
@@ -182,7 +205,7 @@ void GuildWarsSMHub::GetDefaultSize(int& width, int& height) const noexcept
 }
 void GuildWarsSMHub::Terminate()
 {
-    m_party_manager.connection_data.terminate();
+    m_party_manager.terminate();
     // Join all threads before closing
     m_party_manager_thread.join();
 }
