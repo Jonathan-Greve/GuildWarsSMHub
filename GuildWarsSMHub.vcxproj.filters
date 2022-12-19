@@ -17,6 +17,9 @@
     <Filter Include="Party Manager thread">
       <UniqueIdentifier>{dd538b16-075b-400a-b419-6f8c5433bc2c}</UniqueIdentifier>
     </Filter>
+    <Filter Include="My ImGui Components\Party thread">
+      <UniqueIdentifier>{87ed12b6-27d7-4106-8c21-1d85e90c6459}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
@@ -54,7 +57,27 @@
     <ClInclude Include="ShowClientsConnected.h">
       <Filter>My ImGui Components</Filter>
     </ClInclude>
-    <ClInclude Include="PartyManager.h" />
+    <ClInclude Include="LoadTextureFromFile.h">
+      <Filter>My ImGui Components</Filter>
+    </ClInclude>
+    <ClInclude Include="get_filenames.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="stb_image.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="get_first_integer_in_string.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="GW_skill.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="PartyManager.h">
+      <Filter>Party Manager thread</Filter>
+    </ClInclude>
+    <ClInclude Include="PartyThread.h">
+      <Filter>My ImGui Components\Party thread</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp" />
@@ -87,7 +110,12 @@
     <ClCompile Include="ShowClientsConnected.cpp">
       <Filter>My ImGui Components</Filter>
     </ClCompile>
-    <ClCompile Include="PartyManager.cpp" />
+    <ClCompile Include="PartyManager.cpp">
+      <Filter>Party Manager thread</Filter>
+    </ClCompile>
+    <ClCompile Include="PartyThread.cpp">
+      <Filter>My ImGui Components\Party thread</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="resource.rc" />

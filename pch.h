@@ -52,8 +52,6 @@
 #include <tuple>
 #include <string>
 #include <thread>
-#include <mutex>
-#include <shared_mutex>
 #include <chrono>
 #include <future>
 #include <functional>
@@ -61,6 +59,8 @@
 #include <unordered_set>
 #include <unordered_map>
 #include <map>
+
+#include "GW_skill.h"
 
 #ifdef _DEBUG
 #include <dxgidebug.h>
