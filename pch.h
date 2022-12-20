@@ -59,7 +59,9 @@
 #include <unordered_set>
 #include <unordered_map>
 #include <map>
+#include <array>
 
+//Other
 #include "GW_skill.h"
 
 #ifdef _DEBUG

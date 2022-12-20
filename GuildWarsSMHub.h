@@ -64,5 +64,5 @@ private:
     PartyManager m_party_manager;
     std::thread m_party_manager_thread;
 
-    std::unordered_map<int, GW_skill> m_skills;
+    std::array<GW_skill, 3432> m_skills;
 };

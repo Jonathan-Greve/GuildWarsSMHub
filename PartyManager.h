@@ -194,6 +194,19 @@ public:
             }
         }
     }
+    const ClientData* const get_client_data(std::string client_name) const
+    {
+        const auto it = client_datas.find(client_name);
+        if (it != client_datas.end())
+            return it->second;
+
+        return nullptr;
+    }
+
+    const std::unordered_map<std::string, ClientData*>& get_client_data(std::string client_name)
+    {
+        return client_datas;
+    }
 
     ConnectionData connection_data;
 

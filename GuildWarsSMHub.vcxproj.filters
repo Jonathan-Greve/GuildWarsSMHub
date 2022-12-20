@@ -116,6 +116,9 @@
     <ClCompile Include="InstanceParty.cpp">
       <Filter>My ImGui Components\Party thread</Filter>
     </ClCompile>
+    <ClCompile Include="GW_skill.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="resource.rc" />
