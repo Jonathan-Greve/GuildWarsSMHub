@@ -10,6 +10,7 @@ class ConnectionData
 public:
     ConnectionData()
     {
+        //shared_memory_object::remove("connections");
         m_connections_shared_memory = std::make_unique<ConnectionsSharedMemory>();
         m_connections_shared_memory->init();
 
@@ -62,6 +63,7 @@ public:
             // Remove dropped connections and remove shared memory
             if (! new_connected_shared_memory_names.contains(name))
             {
+                m_client_shared_memories[name].get()->get().destroy<SM::ClientData>(unique_instance);
                 m_client_shared_memories.erase(name);
                 shared_memory_object::remove(name.c_str());
                 m_connected_clients_shared_memory_names.erase(name);
@@ -146,8 +148,7 @@ public:
             // the login screen, loading screen, character select menu etc.
             for (const auto& [name, client_data] : client_datas)
             {
-                InstancePartyId party_id = {client_data->instance_info.instance_id,
-                                            client_data->party.party_id};
+                InstancePartyId party_id = {0, 0};
                 if (! is_party_id_valid(party_id))
                     continue;
 
@@ -194,7 +195,7 @@ public:
             }
         }
     }
-    const ClientData* const get_client_data(std::string client_name) const
+    const SM::ClientData* const get_client_data(std::string client_name) const
     {
         const auto it = client_datas.find(client_name);
         if (it != client_datas.end())
@@ -203,7 +204,7 @@ public:
         return nullptr;
     }
 
-    const std::unordered_map<std::string, ClientData*>& get_client_data(std::string client_name)
+    const std::unordered_map<std::string, SM::ClientData*>& get_client_datas(std::string client_name)
     {
         return client_datas;
     }
@@ -213,7 +214,7 @@ public:
 private:
     const DWORD timeout_duration_ms = 1000;
 
-    std::unordered_map<std::string, ClientData*> client_datas;
+    std::unordered_map<std::string, SM::ClientData*> client_datas;
 
     std::map<InstancePartyId, InstanceParty> party_id_to_party_thread_objects;
     std::map<InstancePartyId, std::thread> party_id_to_party_thread;
@@ -236,7 +237,8 @@ private:
         auto client_shared_memory = connection_data.get_client_shared_memory(name);
         assert(name == client_shared_memory->get_sm_name());
 
-        auto new_client_data = client_shared_memory->get().find_or_construct<ClientData>(unique_instance)();
+        auto new_client_data =
+          client_shared_memory->get().find_or_construct<SM::ClientData>(unique_instance)();
         client_datas.insert({name, new_client_data});
     }
 };
