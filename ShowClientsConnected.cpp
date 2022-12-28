@@ -60,22 +60,17 @@ void ShowClientsConnected::operator()(PartyManager& party_manager, const std::ar
 
         for (const auto& name : connected_client_names)
         {
-            const auto client_data = party_manager.get_client_data(name);
-            //std::string player_name =
-            //  std::string(client_data->player.name.begin(), client_data->player.name.end());
-            if (client_data)
-            {
-                ImGui::Text("%s", "Test name");
-                ImGui::NextColumn();
-                ImGui::Text("%s", "W/Mo");
-                ImGui::NextColumn();
-                ImGui::Text("%s", "Ascalon City");
-                ImGui::NextColumn();
-                ImGui::Text("(%u, %d)", 1, 2);
-                ImGui::NextColumn();
-                ImGui::Text("%d", 1);
-                ImGui::NextColumn();
-            }
+            const auto client_data_opt = party_manager.get_client_data(name);
+            ImGui::Text("%s", "Test name");
+            ImGui::NextColumn();
+            ImGui::Text("%s", "W/Mo");
+            ImGui::NextColumn();
+            ImGui::Text("%s", "Ascalon City");
+            ImGui::NextColumn();
+            ImGui::Text("(%u, %d)", 1, 2);
+            ImGui::NextColumn();
+            ImGui::Text("%d", 1);
+            ImGui::NextColumn();
         }
         ImGui::Columns(1);
         ImGui::End();

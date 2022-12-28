@@ -4,7 +4,7 @@ extern bool is_shutting_down;
 class InstanceParty
 {
 public:
-    InstanceParty(const std::unordered_map<std::string, SM::ClientData*>& client_datas,
+    InstanceParty(const std::unordered_map<std::string, void*>& client_datas,
                   const std::unordered_set<std::string>& client_names_in_party)
         : m_client_datas(client_datas)
         , m_client_names_in_party(client_names_in_party)
@@ -20,6 +20,6 @@ public:
     }
 
 private:
-    const std::unordered_map<std::string, SM::ClientData*>& m_client_datas;
+    const std::unordered_map<std::string, void*>& m_client_datas;
     const std::unordered_set<std::string>& m_client_names_in_party;
 };

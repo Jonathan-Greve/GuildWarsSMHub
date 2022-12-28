@@ -76,7 +76,7 @@
 #include <tchar.h>
 
 // Shared memory
-#include "GWSharedMemory.h"
+#include "GWIPC.h"
 
 namespace DX
 {

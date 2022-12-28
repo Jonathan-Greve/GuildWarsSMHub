@@ -1,5 +1,8 @@
 #pragma once
 #include "InstanceParty.h"
+#include <capnp/common.h>
+#include <capnp/serialize.h>
+
 extern bool is_shutting_down;
 
 // <instance_id, party_id>
@@ -10,62 +13,50 @@ class ConnectionData
 public:
     ConnectionData()
     {
-        //shared_memory_object::remove("connections");
-        m_connections_shared_memory = std::make_unique<ConnectionsSharedMemory>();
-        m_connections_shared_memory->init();
-
         // Signal event so we always read the connection data
         // the first time update() is called.
-        SetEvent(m_connections_shared_memory->get_event_handle());
+        SetEvent(m_connections_shared_memory.get_event_handle());
     }
 
     void terminate()
     {
         // update() might be waiting on the event so release it.
-        SetEvent(m_connections_shared_memory->get_event_handle());
+        SetEvent(m_connections_shared_memory.get_event_handle());
     }
 
     // Update data. Blocking until connection data changes.
     std::pair<std::vector<std::string>, std::vector<std::string>> update(DWORD event_timeout_duration)
     {
-        auto connected_clients = m_connections_shared_memory->get_connected_clients();
+        auto connected_clients = m_connections_shared_memory.get_connections_ids();
 
         // Wait for event to be signaled
         auto wait_result =
-          WaitForSingleObject(m_connections_shared_memory->get_event_handle(), event_timeout_duration);
+          WaitForSingleObject(m_connections_shared_memory.get_event_handle(), event_timeout_duration);
         if (is_shutting_down || wait_result != WAIT_OBJECT_0)
             return {};
-        // Then lock mutex before accessing shared memory data
-        WaitForSingleObject(m_connections_shared_memory->get_mutex_handle(), INFINITE);
 
-        // Convert data from char_string_set to the more common std::set representation.
-        auto new_data = connected_clients->get_connected_shared_memory_names();
-        std::set<std::string> new_connected_shared_memory_names;
-        for (const auto& char_string_name : new_data)
-        {
-            std::string name(char_string_name.begin(), char_string_name.end());
-            new_connected_shared_memory_names.insert(name);
-        }
-        ResetEvent(m_connections_shared_memory->get_event_handle());
-        ReleaseMutex(m_connections_shared_memory->get_mutex_handle());
+        // Then lock mutex before accessing shared memory data
+        WaitForSingleObject(m_connections_shared_memory.get_mutex_handle(), INFINITY);
+        auto connection_ids = m_connections_shared_memory.get_connections_ids();
+        ResetEvent(m_connections_shared_memory.get_event_handle());
+        ReleaseMutex(m_connections_shared_memory.get_mutex_handle());
+
+        std::set<std::string> new_connection_ids(connection_ids.begin(), connection_ids.end());
 
         // Get set difference between new and locally cached connection names.
         std::vector<std::string> diff;
-        std::set_symmetric_difference(
-          new_connected_shared_memory_names.begin(), new_connected_shared_memory_names.end(),
-          m_connected_clients_shared_memory_names.begin(), m_connected_clients_shared_memory_names.end(),
-          std::inserter(diff, diff.begin()));
+        std::set_symmetric_difference(new_connection_ids.begin(), new_connection_ids.end(),
+                                      m_connected_clients_shared_memory_names.begin(),
+                                      m_connected_clients_shared_memory_names.end(),
+                                      std::inserter(diff, diff.begin()));
 
         std::vector<std::string> connected_client_names;
         std::vector<std::string> disconnected_client_names;
         for (const auto& name : diff)
         {
             // Remove dropped connections and remove shared memory
-            if (! new_connected_shared_memory_names.contains(name))
+            if (! new_connection_ids.contains(name))
             {
-                m_client_shared_memories[name].get()->get().destroy<SM::ClientData>(unique_instance);
-                m_client_shared_memories.erase(name);
-                shared_memory_object::remove(name.c_str());
                 m_connected_clients_shared_memory_names.erase(name);
 
                 disconnected_client_names.push_back(name);
@@ -75,15 +66,11 @@ public:
             {
                 m_connected_clients_shared_memory_names.insert(name);
 
-                auto p_new_client_shared_memory = std::make_unique<ClientSharedMemory>();
-                p_new_client_shared_memory->init(name);
-                m_client_shared_memories.insert({name, std::move(p_new_client_shared_memory)});
-
                 connected_client_names.push_back(name);
             }
         }
         // Assert that our locally cached set of connection match the one in shared memory
-        assert(m_connected_clients_shared_memory_names == new_connected_shared_memory_names);
+        assert(m_connected_clients_shared_memory_names == new_connection_ids);
 
         return {connected_client_names, disconnected_client_names};
     }
@@ -95,20 +82,12 @@ public:
         return m_connected_clients_shared_memory_names;
     };
 
-    ClientSharedMemory* get_client_shared_memory(std::string client_shared_memory_name)
-    {
-        const auto it = m_client_shared_memories.find(client_shared_memory_name);
-        if (it != m_client_shared_memories.end())
-            return it->second.get();
-
-        return nullptr;
-    }
+    void* get_client_shared_memory(std::string client_shared_memory_name) { return nullptr; }
 
 private:
-    std::unique_ptr<ConnectionsSharedMemory> m_connections_shared_memory;
+    GWIPC::ConnectionManager m_connections_shared_memory;
 
     std::set<std::string> m_connected_clients_shared_memory_names;
-    std::unordered_map<std::string, std::unique_ptr<ClientSharedMemory>> m_client_shared_memories;
 };
 
 class PartyManager
@@ -195,18 +174,14 @@ public:
             }
         }
     }
-    const SM::ClientData* const get_client_data(std::string client_name) const
+    const std::optional<void*> const get_client_data(std::string client_name) const
     {
         const auto it = client_datas.find(client_name);
         if (it != client_datas.end())
-            return it->second;
+        {
+        }
 
-        return nullptr;
-    }
-
-    const std::unordered_map<std::string, SM::ClientData*>& get_client_datas(std::string client_name)
-    {
-        return client_datas;
+        return std::nullopt;
     }
 
     ConnectionData connection_data;
@@ -214,7 +189,7 @@ public:
 private:
     const DWORD timeout_duration_ms = 1000;
 
-    std::unordered_map<std::string, SM::ClientData*> client_datas;
+    std::unordered_map<std::string, void*> client_datas;
 
     std::map<InstancePartyId, InstanceParty> party_id_to_party_thread_objects;
     std::map<InstancePartyId, std::thread> party_id_to_party_thread;
@@ -222,23 +197,9 @@ private:
     std::map<InstancePartyId, std::unordered_set<std::string>> party_id_to_client_names;
     std::unordered_map<std::string, InstancePartyId> client_name_to_party_id;
 
-    // Each client has a <InstanceId, PartyId> pair which uniquely identifies a party.
-    // This data structure keeps track of which players are in each party and their
-    // Corresponding party_thread.
-    std::unordered_map<int, std::unordered_map<int, std::pair<std::vector<string>, std::thread>>>
-      existing_parties;
-
     bool is_party_id_valid(InstancePartyId party_id) { return party_id.first > 0 && party_id.second > 0; }
 
     void remove_client_data(const std::string& name) { client_datas.erase(name); }
 
-    void add_client_data(const std::string& name)
-    {
-        auto client_shared_memory = connection_data.get_client_shared_memory(name);
-        assert(name == client_shared_memory->get_sm_name());
-
-        auto new_client_data =
-          client_shared_memory->get().find_or_construct<SM::ClientData>(unique_instance)();
-        client_datas.insert({name, new_client_data});
-    }
+    void add_client_data(const std::string& name) { }
 };

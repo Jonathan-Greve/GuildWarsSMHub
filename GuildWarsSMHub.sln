@@ -5,7 +5,7 @@ VisualStudioVersion = 17.4.33110.190
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "GuildWarsSMHub", "GuildWarsSMHub.vcxproj", "{7FAD018E-49EF-4880-9059-49063F45C66B}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "GWSharedMemory", "..\GWSharedMemory\GWSharedMemory.vcxproj", "{E83F39EB-395B-4B62-9E78-D3BCA4697231}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "GWIPC", "..\Jonathan-Greve\GWIPC\GWIPC\GWIPC.vcxproj", "{F1AAAE72-C9C9-44B6-9C49-C7403C14883A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -23,14 +23,14 @@ Global
 		{7FAD018E-49EF-4880-9059-49063F45C66B}.Release|x64.Build.0 = Release|x64
 		{7FAD018E-49EF-4880-9059-49063F45C66B}.Release|x86.ActiveCfg = Release|Win32
 		{7FAD018E-49EF-4880-9059-49063F45C66B}.Release|x86.Build.0 = Release|Win32
-		{E83F39EB-395B-4B62-9E78-D3BCA4697231}.Debug|x64.ActiveCfg = Debug|x64
-		{E83F39EB-395B-4B62-9E78-D3BCA4697231}.Debug|x64.Build.0 = Debug|x64
-		{E83F39EB-395B-4B62-9E78-D3BCA4697231}.Debug|x86.ActiveCfg = Debug|Win32
-		{E83F39EB-395B-4B62-9E78-D3BCA4697231}.Debug|x86.Build.0 = Debug|Win32
-		{E83F39EB-395B-4B62-9E78-D3BCA4697231}.Release|x64.ActiveCfg = Release|x64
-		{E83F39EB-395B-4B62-9E78-D3BCA4697231}.Release|x64.Build.0 = Release|x64
-		{E83F39EB-395B-4B62-9E78-D3BCA4697231}.Release|x86.ActiveCfg = Release|Win32
-		{E83F39EB-395B-4B62-9E78-D3BCA4697231}.Release|x86.Build.0 = Release|Win32
+		{F1AAAE72-C9C9-44B6-9C49-C7403C14883A}.Debug|x64.ActiveCfg = Debug|x64
+		{F1AAAE72-C9C9-44B6-9C49-C7403C14883A}.Debug|x64.Build.0 = Debug|x64
+		{F1AAAE72-C9C9-44B6-9C49-C7403C14883A}.Debug|x86.ActiveCfg = Debug|Win32
+		{F1AAAE72-C9C9-44B6-9C49-C7403C14883A}.Debug|x86.Build.0 = Debug|Win32
+		{F1AAAE72-C9C9-44B6-9C49-C7403C14883A}.Release|x64.ActiveCfg = Release|x64
+		{F1AAAE72-C9C9-44B6-9C49-C7403C14883A}.Release|x64.Build.0 = Release|x64
+		{F1AAAE72-C9C9-44B6-9C49-C7403C14883A}.Release|x86.ActiveCfg = Release|Win32
+		{F1AAAE72-C9C9-44B6-9C49-C7403C14883A}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
