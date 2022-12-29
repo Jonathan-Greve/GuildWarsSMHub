@@ -46,8 +46,7 @@ public:
         // Get set difference between new and locally cached connection names.
         std::vector<std::string> diff;
         std::set_symmetric_difference(new_connection_ids.begin(), new_connection_ids.end(),
-                                      m_connected_clients_shared_memory_names.begin(),
-                                      m_connected_clients_shared_memory_names.end(),
+                                      m_connection_ids.begin(), m_connection_ids.end(),
                                       std::inserter(diff, diff.begin()));
 
         std::vector<std::string> connected_client_names;
@@ -57,37 +56,35 @@ public:
             // Remove dropped connections and remove shared memory
             if (! new_connection_ids.contains(name))
             {
-                m_connected_clients_shared_memory_names.erase(name);
+                m_connection_ids.erase(name);
 
                 disconnected_client_names.push_back(name);
             }
             // Add new connections and create_or_open shared memory for client
             else
             {
-                m_connected_clients_shared_memory_names.insert(name);
+                m_connection_ids.insert(name);
 
                 connected_client_names.push_back(name);
             }
         }
         // Assert that our locally cached set of connection match the one in shared memory
-        assert(m_connected_clients_shared_memory_names == new_connection_ids);
+        assert(m_connection_ids == new_connection_ids);
 
         return {connected_client_names, disconnected_client_names};
     }
 
     // Get the connected clients emails. This is not neccesarily up to date.
     // Call update first to update.
-    const std::set<std::string>& get_connected_clients_shared_memory_names()
-    {
-        return m_connected_clients_shared_memory_names;
-    };
+    const std::set<std::string>& get_connected_clients_shared_memory_names() { return m_connection_ids; };
 
-    void* get_client_shared_memory(std::string client_shared_memory_name) { return nullptr; }
+    void* get_client_shared_memory(std::string connection_id) { return nullptr; }
 
 private:
     GWIPC::ConnectionManager m_connections_shared_memory;
 
-    std::set<std::string> m_connected_clients_shared_memory_names;
+    // Contains the email addresses of the connected clients.
+    std::set<std::string> m_connection_ids;
 };
 
 class PartyManager
