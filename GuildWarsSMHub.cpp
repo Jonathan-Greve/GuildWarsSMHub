@@ -25,8 +25,11 @@ GuildWarsSMHub::GuildWarsSMHub() noexcept(false)
 // Initialize the Direct3D resources required to run.
 void GuildWarsSMHub::Initialize(HWND window, int width, int height)
 {
+    // Init ConnectionData
+    m_connection_data_thread = std::thread(&ConnectionData::run, &m_connection_data);
+
     // Init Party Manager
-    m_party_manager_thread = std::thread(&PartyManager::run, &m_party_manager);
+    m_party_manager_thread = std::thread(&PartyManager::run, &m_party_manager, std::ref(m_connection_data));
 
     m_deviceResources->SetWindow(window, width, height);
 
@@ -99,7 +102,7 @@ void GuildWarsSMHub::Render()
     if (show_demo_window)
         ImGui::ShowDemoWindow(&show_demo_window);
 
-    ShowClientsConnected()(m_party_manager, m_skills);
+    ShowClientsConnected()(m_connection_data, m_skills);
 
     // Rendering
     ImGui::Render();
@@ -184,6 +187,7 @@ void GuildWarsSMHub::GetDefaultSize(int& width, int& height) const noexcept
 }
 void GuildWarsSMHub::Terminate()
 {
+    m_connection_data.terminate();
     m_party_manager.terminate();
     // Join all threads before closing
     m_party_manager_thread.join();

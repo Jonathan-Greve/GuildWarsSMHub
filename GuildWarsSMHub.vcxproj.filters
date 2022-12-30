@@ -20,6 +20,9 @@
     <Filter Include="My ImGui Components\Party thread">
       <UniqueIdentifier>{87ed12b6-27d7-4106-8c21-1d85e90c6459}</UniqueIdentifier>
     </Filter>
+    <Filter Include="ConnectionData thread">
+      <UniqueIdentifier>{44581fc2-751c-43bc-aced-c9d177e6ae55}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
@@ -78,6 +81,9 @@
     <ClInclude Include="InstanceParty.h">
       <Filter>My ImGui Components\Party thread</Filter>
     </ClInclude>
+    <ClInclude Include="ConnectionData.h">
+      <Filter>ConnectionData thread</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp" />
@@ -118,6 +124,9 @@
     </ClCompile>
     <ClCompile Include="GW_skill.cpp">
       <Filter>Common</Filter>
+    </ClCompile>
+    <ClCompile Include="ConnectionData.cpp">
+      <Filter>ConnectionData thread</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

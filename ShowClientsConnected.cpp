@@ -3,11 +3,11 @@
 #define IMGUI_DEFINE_MATH_OPERATORS
 #include "imgui_internal.h"
 
-void ShowClientsConnected::operator()(PartyManager& party_manager, const std::array<GW_skill, 3432> skills)
+void ShowClientsConnected::operator()(ConnectionData& connection_data,
+                                      const std::array<GW_skill, 3432> skills)
 {
     {
-        const auto connected_client_names =
-          party_manager.connection_data.get_connected_clients_shared_memory_names();
+        const auto connected_client_names = connection_data.get_connected_client_ids();
 
         ImGui::Begin("Connected clients");
 
@@ -60,7 +60,6 @@ void ShowClientsConnected::operator()(PartyManager& party_manager, const std::ar
 
         for (const auto& name : connected_client_names)
         {
-            const auto client_data_opt = party_manager.get_client_data(name);
             ImGui::Text("%s", "Test name");
             ImGui::NextColumn();
             ImGui::Text("%s", "W/Mo");

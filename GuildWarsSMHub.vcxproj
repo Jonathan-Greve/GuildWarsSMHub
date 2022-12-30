@@ -186,6 +186,7 @@
     </Manifest>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="ConnectionData.h" />
     <ClInclude Include="DeviceResources.h" />
     <ClInclude Include="get_first_integer_in_string.h" />
     <ClInclude Include="GuildWarsSMHub.h" />
@@ -208,6 +209,7 @@
     <ClInclude Include="StepTimer.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="ConnectionData.cpp" />
     <ClCompile Include="DeviceResources.cpp" />
     <ClCompile Include="GuildWarsSMHub.cpp" />
     <ClCompile Include="GW_skill.cpp" />

@@ -1,5 +1,6 @@
 #pragma once
 #include "PartyManager.h"
+#include "ConnectionData.h"
 
 struct Character
 {
@@ -14,5 +15,5 @@ struct Character
 class ShowClientsConnected
 {
 public:
-    void operator()(PartyManager& party_manager, const std::array<GW_skill, 3432> skills);
+    void operator()(ConnectionData& connection_data, const std::array<GW_skill, 3432> skills);
 };

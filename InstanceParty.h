@@ -1,12 +1,14 @@
 #pragma once
+#include "ConnectionData.h"
+
 extern bool is_shutting_down;
 
 class InstanceParty
 {
 public:
-    InstanceParty(const std::unordered_map<std::string, void*>& client_datas,
+    InstanceParty(const ConnectionData& connection_data,
                   const std::unordered_set<std::string>& client_names_in_party)
-        : m_client_datas(client_datas)
+        : m_connection_data(connection_data)
         , m_client_names_in_party(client_names_in_party)
     {
     }
@@ -20,6 +22,6 @@ public:
     }
 
 private:
-    const std::unordered_map<std::string, void*>& m_client_datas;
+    const ConnectionData& m_connection_data;
     const std::unordered_set<std::string>& m_client_names_in_party;
 };

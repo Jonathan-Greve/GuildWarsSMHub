@@ -60,6 +60,8 @@
 #include <unordered_map>
 #include <map>
 #include <array>
+#include <mutex>
+#include <shared_mutex>
 
 //Other
 #include "GW_skill.h"

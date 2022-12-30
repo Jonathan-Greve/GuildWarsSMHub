@@ -6,6 +6,7 @@
 
 #include "DeviceResources.h"
 #include "StepTimer.h"
+#include "ConnectionData.h"
 #include "PartyManager.h"
 
 // A basic game implementation that creates a D3D11 device and
@@ -61,8 +62,11 @@ private:
     // Rendering loop timer.
     DX::StepTimer m_timer;
 
+    ConnectionData m_connection_data;
     PartyManager m_party_manager;
+
     std::thread m_party_manager_thread;
+    std::thread m_connection_data_thread;
 
     std::array<GW_skill, 3432> m_skills;
 };
