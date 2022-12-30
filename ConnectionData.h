@@ -88,7 +88,7 @@ public:
         const auto sm = get_client_shared_memory(connection_id);
         if (sm)
         {
-            auto sm_data = static_cast<uint8_t*>(sm->data());
+            auto sm_data = sm->get_data();
             if (sm_data)
             {
                 const auto it = client_data_bufs.find(connection_id);
@@ -100,7 +100,8 @@ public:
                 // Copy the shared memory to a local buffer
                 {
                     GWIPC::SharedMemoryLock lock(*sm);
-                    memcpy(client_data_bufs[connection_id].data(), sm->data(), GWIPC::CLIENTDATA_SIZE);
+                    auto data_info = sm->get_data_info();
+                    memcpy(client_data_bufs[connection_id].data(), sm_data, data_info->data_size);
                 }
 
                 auto client_data = GWIPC::GetClientData(client_data_bufs[connection_id].data());
