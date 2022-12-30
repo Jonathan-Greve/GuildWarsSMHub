@@ -16,8 +16,9 @@ public:
         // update() might be waiting on the event so release it.
         SetEvent(m_connections_shared_memory.get_event_handle());
 
-        //for (auto& [_, sm] : client_sm)
-        //    sm.terminate();
+        for (auto& [_, sm] : client_sm)
+            sm.terminate();
+        m_connections_shared_memory.terminate();
     }
 
     // Update data. Blocking until connection data changes.
@@ -53,8 +54,13 @@ public:
                         std::scoped_lock lock(connection_ids_mutex_);
                         m_connection_ids.erase(id);
                     }
-                    //client_sm[id].terminate();
-                    client_sm.erase(id);
+
+                    const auto it = client_sm.find(id);
+                    if (it != client_sm.end())
+                    {
+                        it->second.terminate();
+                        client_sm.erase(it);
+                    }
                 }
                 // Add new connections and create_or_open shared memory for client
                 else
