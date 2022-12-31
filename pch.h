@@ -65,6 +65,7 @@
 
 //Other
 #include "GW_skill.h"
+#include "GWCA_Maps.h"
 
 #ifdef _DEBUG
 #include <dxgidebug.h>

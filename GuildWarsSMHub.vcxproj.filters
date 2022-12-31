@@ -84,6 +84,9 @@
     <ClInclude Include="ConnectionData.h">
       <Filter>ConnectionData thread</Filter>
     </ClInclude>
+    <ClInclude Include="GWCA_Maps.h">
+      <Filter>Common</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp" />

@@ -83,7 +83,7 @@ public:
         return m_connection_ids;
     };
 
-    const GWIPC::ClientData* GetClientData(std::string connection_id)
+    const GWIPC::ClientData* get_client_data(std::string connection_id)
     {
         const auto sm = get_client_shared_memory(connection_id);
         if (sm)

@@ -50,12 +50,14 @@ public:
             // the login screen, loading screen, character select menu etc.
             for (const auto id : managed_connected_client_ids_)
             {
-                const auto client_data = connection_data.GetClientData(id);
+                const auto client_data = connection_data.get_client_data(id);
                 if (client_data)
                 {
                     const auto instance = client_data->instance();
                     const auto party = client_data->party();
 
+                    if (! instance || ! party)
+                        continue;
                     InstancePartyId party_id = {instance->instance_id(), party->party_id()};
                     if (! is_party_id_valid(party_id))
                         continue;

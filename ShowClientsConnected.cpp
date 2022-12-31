@@ -7,17 +7,17 @@ void ShowClientsConnected::operator()(ConnectionData& connection_data,
                                       const std::array<GW_skill, 3432> skills)
 {
     {
-        const auto connected_client_names = connection_data.get_connected_client_ids();
+        const auto connected_client_ids = connection_data.get_connected_client_ids();
 
         ImGui::Begin("Connected clients");
 
         ImGui::Text("Number of connections: ");
         ImGui::SameLine(0, 0);
-        ImGui::TextColored(ImVec4(0.2, 1, 0.3, 1), std::to_string(connected_client_names.size()).c_str());
+        ImGui::TextColored(ImVec4(0.2, 1, 0.3, 1), std::to_string(connected_client_ids.size()).c_str());
 
-        for (const auto& name : connected_client_names)
+        for (const auto& id : connected_client_ids)
         {
-            if (ImGui::CollapsingHeader(name.c_str(), ImGuiTreeNodeFlags_OpenOnDoubleClick))
+            if (ImGui::CollapsingHeader(id.c_str(), ImGuiTreeNodeFlags_OpenOnDoubleClick))
             {
                 ImGui::Text("IsItemHovered: %d", ImGui::IsItemHovered());
             }
@@ -30,22 +30,24 @@ void ShowClientsConnected::operator()(ConnectionData& connection_data,
         // Display the number of connections
         ImGui::Text("Number of connections:");
         ImGui::SameLine();
-        ImGui::TextColored(ImVec4(0.2, 1, 0.3, 1), std::to_string(connected_client_names.size()).c_str());
+        ImGui::TextColored(ImVec4(0.2, 1, 0.3, 1), std::to_string(connected_client_ids.size()).c_str());
 
         // Display a list of connections
         if (ImGui::BeginListBox("Connections listbox",
                                 ImVec2(-FLT_MIN, 5 * ImGui::GetTextLineHeightWithSpacing())))
         {
-            for (const auto& name : connected_client_names)
+            for (const auto& id : connected_client_ids)
             {
-                ImGui::Text("%s", name.c_str());
+                ImGui::Text("%s", id.c_str());
             }
             ImGui::EndListBox();
         }
 
         // Display a list of character names, character classes, locations, party IDs, and party sizes
-        ImGui::Columns(5, "connection_columns");
+        ImGui::Columns(6, "connection_columns");
         ImGui::Separator();
+        ImGui::Text("Game state");
+        ImGui::NextColumn();
         ImGui::Text("Character Name");
         ImGui::NextColumn();
         ImGui::Text("Character Class");
@@ -58,18 +60,38 @@ void ShowClientsConnected::operator()(ConnectionData& connection_data,
         ImGui::NextColumn();
         ImGui::Separator();
 
-        for (const auto& name : connected_client_names)
+        for (const auto& id : connected_client_ids)
         {
-            ImGui::Text("%s", "Test name");
-            ImGui::NextColumn();
-            ImGui::Text("%s", "W/Mo");
-            ImGui::NextColumn();
-            ImGui::Text("%s", "Ascalon City");
-            ImGui::NextColumn();
-            ImGui::Text("(%u, %d)", 1, 2);
-            ImGui::NextColumn();
-            ImGui::Text("%d", 1);
-            ImGui::NextColumn();
+            auto client_data = connection_data.get_client_data(id);
+            if (client_data)
+            {
+                auto game_state_name = GWIPC::EnumNamesGameState()[client_data->game_state()];
+                ImGui::Text("%s", game_state_name);
+                ImGui::NextColumn();
+
+                auto name = client_data->character()->agent_living()->name();
+                ImGui::Text("%s", name->c_str());
+                ImGui::NextColumn();
+
+                auto primary = client_data->character()->agent_living()->primary_profession();
+                auto primary_name = GWIPC::EnumNamesProfession()[primary];
+                auto secondary = client_data->character()->agent_living()->secondary_profession();
+                auto secondary_name = GWIPC::EnumNamesProfession()[secondary];
+                ImGui::Text("%s/%s", primary_name, secondary_name);
+                ImGui::NextColumn();
+
+                auto map_id = client_data->instance()->map_id();
+                ImGui::Text("%s", GW::Constants::NAME_FROM_ID[map_id]);
+                ImGui::NextColumn();
+
+                auto instance_id = client_data->instance()->instance_id();
+                auto party_id = client_data->party()->party_id();
+                ImGui::Text("(%u, %u)", instance_id, party_id);
+                ImGui::NextColumn();
+
+                ImGui::Text("%d", 1);
+                ImGui::NextColumn();
+            }
         }
         ImGui::Columns(1);
         ImGui::End();

@@ -191,6 +191,7 @@
     <ClInclude Include="get_first_integer_in_string.h" />
     <ClInclude Include="GuildWarsSMHub.h" />
     <ClInclude Include="get_filenames.h" />
+    <ClInclude Include="GWCA_Maps.h" />
     <ClInclude Include="GW_skill.h" />
     <ClInclude Include="imconfig.h" />
     <ClInclude Include="imgui.h" />
